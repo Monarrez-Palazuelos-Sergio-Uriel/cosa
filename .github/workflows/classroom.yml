@@ -1,0 +1,86 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: test_loginValido
+      id: test_loginvalido
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: test_loginValido
+        setup-command: make compile
+        command: java -Dfile.encoding=UTF-8 -jar lib/junit-platform-console-standalone-1.5.2.jar
+          -class-path build --select-method miTest.AppTest#test_loginValido
+        timeout: 10
+        max-score: 10
+    - name: BuscarIndiceInvertidoTest
+      id: buscarindiceinvertidotest
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: BuscarIndiceInvertidoTest
+        setup-command: make compile
+        command: java -Dfile.encoding=UTF-8 -jar lib/junit-platform-console-standalone-1.5.2.jar
+          -class-path build --select-method miTest.AppTest#BuscarIndiceInvertidoTest
+        timeout: 10
+        max-score: 20
+    - name: testIndiceEncuentraProductoAlAgregar
+      id: testindiceencuentraproductoalagregar
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testIndiceEncuentraProductoAlAgregar
+        setup-command: make compile
+        command: java -Dfile.encoding=UTF-8 -jar lib/junit-platform-console-standalone-1.5.2.jar
+          -class-path build --select-method miTest.AppTest#testIndiceEncuentraProductoAlAgregar
+        timeout: 10
+        max-score: 20
+    - name: testPilaColaPrestamos
+      id: testpilacolaprestamos
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testPilaColaPrestamos
+        setup-command: make compile
+        command: java -Dfile.encoding=UTF-8 -jar lib/junit-platform-console-standalone-1.5.2.jar
+          -class-path build --select-method miTest.AppTest#testPilaColaPrestamos
+        timeout: 10
+        max-score: 20
+    - name: test_devolverProducto
+      id: test_devolverproducto
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: test_devolverProducto
+        setup-command: make compile
+        command: java -Dfile.encoding=UTF-8 -jar lib/junit-platform-console-standalone-1.5.2.jar
+          -class-path build --select-method miTest.AppTest#test_devolverProducto
+        timeout: 10
+        max-score: 20
+    - name: testLeerArchivo
+      id: testleerarchivo
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: testLeerArchivo
+        setup-command: make compile
+        command: java -Dfile.encoding=UTF-8 -jar lib/junit-platform-console-standalone-1.5.2.jar
+          -class-path build --select-method miTest.AppTest#testLeerArchivo
+        timeout: 10
+        max-score: 10
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        TEST_LOGINVALIDO_RESULTS: "${{steps.test_loginvalido.outputs.result}}"
+        BUSCARINDICEINVERTIDOTEST_RESULTS: "${{steps.buscarindiceinvertidotest.outputs.result}}"
+        TESTINDICEENCUENTRAPRODUCTOALAGREGAR_RESULTS: "${{steps.testindiceencuentraproductoalagregar.outputs.result}}"
+        TESTPILACOLAPRESTAMOS_RESULTS: "${{steps.testpilacolaprestamos.outputs.result}}"
+        TEST_DEVOLVERPRODUCTO_RESULTS: "${{steps.test_devolverproducto.outputs.result}}"
+        TESTLEERARCHIVO_RESULTS: "${{steps.testleerarchivo.outputs.result}}"
+      with:
+        runners: test_loginvalido,buscarindiceinvertidotest,testindiceencuentraproductoalagregar,testpilacolaprestamos,test_devolverproducto,testleerarchivo
